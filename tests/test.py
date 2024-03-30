@@ -10,12 +10,9 @@ files = os.listdir(folder_path)
 # 过滤出 EPUB 文件
 epub_files = [os.path.join(folder_path, file) for file in files if file.endswith(".epub")]
 
-# 创建一个列表来存储 EPUB 地址
-epub_addresses = []
+# 创建一个列表来存储符合条件的 EPUB 地址（不包含'bilingual'）
+epub_addresses = [file for file in epub_files if 'bilingual' not in file]
 
-# 将 EPUB 地址添加到列表中
-for file in epub_files:
-    epub_addresses.append(file)
 
 # 打印 EPUB 地址列表
 print(epub_addresses)
@@ -31,5 +28,5 @@ for epub in epub_addresses:
             "--model","google"]
 
     # 执行命令
-    subprocess.run(command)
+    # subprocess.run(command)
 
