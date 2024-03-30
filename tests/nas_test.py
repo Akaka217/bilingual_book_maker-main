@@ -13,28 +13,51 @@ epub_files = [file for file in files if file.endswith(".epub")]
 # 创建一个列表来存储 EPUB 地址
 epub_addresses = []
 
-# 临时存储已检测到的双语版文件名，以便排除
+# 初始化列表
+untranslated = []  # 未翻译的列表
+translated = []  # 已翻译的列表
+other_epubs = []  # 其他 EPUB 文件列表
+
+# 用于临时存储已检测到的双语版文件名
 bilingual_detected = set()
 
-# 将 EPUB 地址添加到列表中
 for file in epub_files:
-    # 检查是否为双语版或已经检测到对应的双语版
-    base_name = file[:-5]  # 移除".epub"获取基础文件名
-    if base_name + "_bilingual.epub" in epub_files or base_name in bilingual_detected:
-        # 如果当前文件是双语版或已经找到对应的双语版，则跳过
-        continue
-    # 检查对应的双语版文件是否存在
-    if base_name + ".epub" in epub_files and base_name + "_bilingual.epub" in epub_files:
-        bilingual_detected.add(base_name)  # 添加到已检测集合，防止重复添加
-        continue  # 存在对应的双语版本时，跳过添加
-    epub_address = os.path.join(folder_path, file)
-    epub_addresses.append(epub_address)
+    base_name = file[:-5]  # 移除扩展名获取基础文件名
+    full_path = os.path.join(folder_path, file)  # 将文件名转换为完整路径
+    if "_bilingual" in file:
+        # 对于双语版，检查是否存在其非双语版本
+        if base_name.replace("_bilingual", "") + ".epub" in epub_files:
+            translated.append(base_name.replace("_bilingual", "") + ".epub")
+        else:
+            # 如果没有对应的非双语版本，视为其他 EPUB 文件
+            other_epubs.append(file)
+    else:
+        # 对于非双语版本，检查是否存在其双语版本
+        if base_name + "_bilingual.epub" in epub_files:
+            # 如果存在，已经在上面的逻辑中处理，这里不做操作
+            continue
+        else:
+            # 如果不存在双语版本，视为未翻译
+            untranslated.append(file)
 
-# 打印结果或进行后续处理
-for address in epub_addresses:
-    print(address)
+# 确保所有已翻译的文件都不在未翻译列表中
+untranslated = [file for file in untranslated if file not in translated]
 
-for epub in epub_addresses:
+# 构建除去已翻译和未翻译的 EPUB 文件列表
+other_epubs = [file for file in epub_files if file not in untranslated and file not in translated]
+
+for epub in translated:
+    print("translated",epub)
+
+for epub in untranslated:
+    print("untrans",epub)
+
+for epub in other_epubs:
+    print("others",epub)
+
+untranslated_paths = [folder_path + "\\" + file for file in untranslated]
+
+for epub in untranslated_paths:
 
     # 创建命令
     command = ["python", 
