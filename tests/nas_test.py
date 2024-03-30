@@ -1,7 +1,8 @@
 import os
+import subprocess
 
 # 替换此路径为您的文件夹路径
-folder_path = "F:\\book\\Englishbook\\epub"
+folder_path = "G:\\book\\Englishbook\\epub"
 
 # 获取文件夹中的所有文件
 files = os.listdir(folder_path)
@@ -37,10 +38,10 @@ for epub in epub_addresses:
 
     # 创建命令
     command = ["python", 
-            "F:\PythonCode\\bilingual_book_maker-main\\bilingual_book_maker-main\\make_book.py", 
+            "E:\Code\\Python_code\\bilingual_book_maker-main\\make_book.py", 
             "--book_name", 
             epub,
             "--model","google"]
 
     # 执行命令
-    # subprocess.run(command)
+    subprocess.run(command)
